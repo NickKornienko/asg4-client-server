@@ -1,0 +1,31 @@
+head	1.1;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.1
+date	2021.11.08.08.04.35;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@This file was originally in the server directory.
+It will be removed.
+This file was originally in the server directory.
+It will be removed.
+This file was originally in the server directory.
+It will be removed.
+This file was originally in the server directory.
+It will be removed.
+@

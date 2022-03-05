@@ -1,0 +1,35 @@
+head	1.1;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.1
+date	2021.11.08.08.04.20;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@This is a local file belonging to the client.
+It will be put to the remote directory.
+This is a local file belonging to the client.
+It will be put to the remote directory.
+This is a local file belonging to the client.
+It will be put to the remote directory.
+This is a local file belonging to the client.
+It will be put to the remote directory.
+This is a local file belonging to the client.
+It will be put to the remote directory.
+This is a local file belonging to the client.
+It will be put to the remote directory.
+@
