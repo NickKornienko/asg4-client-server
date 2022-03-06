@@ -44,7 +44,37 @@ void reply_ls (accepted_socket& client_sock, cxi_header& header) {
    DEBUGF ('h', "sent " << ls_output.size() << " bytes");
 }
 
-
+void reply_rm (accepted_socket& client_sock, cxi_header& header) {
+   cout << header.filename;
+   exit(0);
+   /*string headFile = header.filename;
+   string  rm_cmd = "rm " + headFile;
+   const char* rm_cmd_ = static_cast<const char*>(rm_cmd);
+   FILE* ls_pipe = popen (rm_cmd_, "r");
+   if (ls_pipe == nullptr) { 
+      outlog << rm_cmd_ << ": " << strerror (errno) << endl;
+      header.command = cxi_command::NAK;
+      header.nbytes = htonl (errno);
+      send_packet (client_sock, &header, sizeof header);
+      return;
+   }
+   string rm_output;
+   char buffer[0x1000];
+   for (;;) {
+      char* rc = fgets (buffer, sizeof buffer, ls_pipe);
+      if (rc == nullptr) break;
+      rm_output.append (buffer);
+   }
+   pclose (ls_pipe);
+   header.command = cxi_command::ACK;
+   header.nbytes = htonl (rm_output.size());
+   memset (header.filename, 0, FILENAME_SIZE);
+   DEBUGF ('h', "sending header " << header);
+   send_packet (client_sock, &header, sizeof header);
+   send_packet (client_sock, rm_output.c_str(), rm_output.size());
+   DEBUGF ('h', "sent " << rm_output.size() << " bytes");
+*/}
+
 void run_server (accepted_socket& client_sock) {
    outlog.execname (outlog.execname() + "*");
    outlog << "connected to " << to_string (client_sock) << endl;
@@ -56,6 +86,9 @@ void run_server (accepted_socket& client_sock) {
          switch (header.command) {
             case cxi_command::LS: 
                reply_ls (client_sock, header);
+               break;
+            case cxi_command::RM: 
+               reply_rm (client_sock, header);
                break;
             default:
                outlog << "invalid client header:" << header << endl;

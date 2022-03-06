@@ -1,6 +1,7 @@
 // $Id: cxi.cpp,v 1.6 2021-11-08 00:01:44-08 - - $
 
 #include <iostream>
+#include <sstream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -23,6 +24,7 @@ unordered_map<string,cxi_command> command_map {
    {"exit", cxi_command::EXIT},
    {"help", cxi_command::HELP},
    {"ls"  , cxi_command::LS  },
+   {"rm"  , cxi_command::RM  },
 };
 
 static const char help[] = R"||(
@@ -58,7 +60,29 @@ void cxi_ls (client_socket& server) {
    }
 }
 
-
+void cxi_rm (client_socket& server, string file) {
+   cout << file;
+   exit(0);
+   cxi_header header;
+   header.command = cxi_command::RM;
+   //header.filename = filename;
+   DEBUGF ('h', "sending header " << header << endl);
+   send_packet (server, &header, sizeof header);
+   recv_packet (server, &header, sizeof header);
+   DEBUGF ('h', "received header " << header << endl);
+   if (header.command != cxi_command::ACK) {
+      outlog << "sent LS, server did not return ACK" << endl;
+      outlog << "server returned " << header << endl;
+   }else {
+      size_t host_nbytes = ntohl (header.nbytes);
+      auto buffer = make_unique<char[]> (host_nbytes + 1);
+      recv_packet (server, buffer.get(), host_nbytes);
+      DEBUGF ('h', "received " << host_nbytes << " bytes");
+      buffer[host_nbytes] = '\0';
+      cout << buffer.get();
+   }
+}
+
 void usage() {
    cerr << "Usage: " << outlog.execname() << " host port" << endl;
    throw cxi_exit();
@@ -93,7 +117,14 @@ int main (int argc, char** argv) {
          string line;
          getline (cin, line);
          if (cin.eof()) throw cxi_exit();
-         const auto& itor = command_map.find (line);
+ 
+         string segment;
+         vector<string> tokens;
+         istringstream stream(line);
+         while (getline(stream, segment, ' '))
+            tokens.push_back(segment);
+  
+         const auto& itor = command_map.find (tokens[0]);
          cxi_command cmd = itor == command_map.end()
                          ? cxi_command::ERROR : itor->second;
          switch (cmd) {
@@ -105,6 +136,9 @@ int main (int argc, char** argv) {
                break;
             case cxi_command::LS:
                cxi_ls (server);
+               break;
+            case cxi_command::RM:
+               cxi_rm (server, tokens[1]);
                break;
             default:
                outlog << line << ": invalid command" << endl;
