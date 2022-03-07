@@ -17,14 +17,16 @@ using namespace std;
 #include "protocol.h"
 #include "socket.h"
 
-logstream outlog (cout);
-struct cxi_exit: public exception {};
+logstream outlog(cout);
+struct cxi_exit : public exception
+{
+};
 
-unordered_map<string,cxi_command> command_map {
-   {"exit", cxi_command::EXIT},
-   {"help", cxi_command::HELP},
-   {"ls"  , cxi_command::LS  },
-   {"rm"  , cxi_command::RM  },
+unordered_map<string, cxi_command> command_map{
+    {"exit", cxi_command::EXIT},
+    {"help", cxi_command::HELP},
+    {"ls", cxi_command::LS},
+    {"rm", cxi_command::RM},
 };
 
 static const char help[] = R"||(
@@ -36,120 +38,134 @@ put filename - Copy local file to remote host.
 rm filename  - Remove file from remote server.
 )||";
 
-void cxi_help() {
+void cxi_help()
+{
    cout << help;
 }
 
-void cxi_ls (client_socket& server) {
+void cxi_ls(client_socket &server)
+{
    cxi_header header;
    header.command = cxi_command::LS;
-   DEBUGF ('h', "sending header " << header << endl);
-   send_packet (server, &header, sizeof header);
-   recv_packet (server, &header, sizeof header);
-   DEBUGF ('h', "received header " << header << endl);
-   if (header.command != cxi_command::LSOUT) {
+   send_packet(server, &header, sizeof header);
+   recv_packet(server, &header, sizeof header);
+   if (header.command != cxi_command::LSOUT)
+   {
       outlog << "sent LS, server did not return LSOUT" << endl;
       outlog << "server returned " << header << endl;
-   }else {
-      size_t host_nbytes = ntohl (header.nbytes);
-      auto buffer = make_unique<char[]> (host_nbytes + 1);
-      recv_packet (server, buffer.get(), host_nbytes);
-      DEBUGF ('h', "received " << host_nbytes << " bytes");
+   }
+   else
+   {
+      size_t host_nbytes = ntohl(header.nbytes);
+      auto buffer = make_unique<char[]>(host_nbytes + 1);
+      recv_packet(server, buffer.get(), host_nbytes);
       buffer[host_nbytes] = '\0';
       cout << buffer.get();
    }
 }
 
-void cxi_rm (client_socket& server, string file) {
-   cout << file;
-   exit(0);
+void cxi_rm(client_socket &server, string file)
+{
    cxi_header header;
    header.command = cxi_command::RM;
-   //header.filename = filename;
-   DEBUGF ('h', "sending header " << header << endl);
-   send_packet (server, &header, sizeof header);
-   recv_packet (server, &header, sizeof header);
-   DEBUGF ('h', "received header " << header << endl);
-   if (header.command != cxi_command::ACK) {
-      outlog << "sent LS, server did not return ACK" << endl;
-      outlog << "server returned " << header << endl;
-   }else {
-      size_t host_nbytes = ntohl (header.nbytes);
-      auto buffer = make_unique<char[]> (host_nbytes + 1);
-      recv_packet (server, buffer.get(), host_nbytes);
-      DEBUGF ('h', "received " << host_nbytes << " bytes");
-      buffer[host_nbytes] = '\0';
-      cout << buffer.get();
+   strcpy(header.filename, file.c_str());
+
+   send_packet(server, &header, sizeof header);
+   recv_packet(server, &header, sizeof header);
+
+   if (header.command != cxi_command::ACK)
+   {
+      outlog << "Error: Cannot remove: " << header.filename << endl;
+   }
+   else
+   {
+      outlog << "File: " << file << " removed" << endl;
    }
 }
 
-void usage() {
+void usage()
+{
    cerr << "Usage: " << outlog.execname() << " host port" << endl;
    throw cxi_exit();
 }
 
-pair<string,in_port_t> scan_options (int argc, char** argv) {
-   for (;;) {
-      int opt = getopt (argc, argv, "@:");
-      if (opt == EOF) break;
-      switch (opt) {
-         case '@': debugflags::setflags (optarg);
-                   break;
+pair<string, in_port_t> scan_options(int argc, char **argv)
+{
+   for (;;)
+   {
+      int opt = getopt(argc, argv, "@:");
+      if (opt == EOF)
+         break;
+      switch (opt)
+      {
+      case '@':
+         debugflags::setflags(optarg);
+         break;
       }
    }
-   if (argc - optind != 2) usage();
+   if (argc - optind != 2)
+      usage();
    string host = argv[optind];
-   in_port_t port = get_cxi_server_port (argv[optind + 1]);
+   in_port_t port = get_cxi_server_port(argv[optind + 1]);
    return {host, port};
 }
 
-int main (int argc, char** argv) {
-   outlog.execname (basename (argv[0]));
-   outlog << to_string (hostinfo()) << endl;
-   try {
-      auto host_port = scan_options (argc, argv);
+int main(int argc, char **argv)
+{
+   outlog.execname(basename(argv[0]));
+   outlog << to_string(hostinfo()) << endl;
+   try
+   {
+      auto host_port = scan_options(argc, argv);
       string host = host_port.first;
       in_port_t port = host_port.second;
       outlog << "connecting to " << host << " port " << port << endl;
-      client_socket server (host, port);
-      outlog << "connected to " << to_string (server) << endl;
-      for (;;) {
+      client_socket server(host, port);
+      outlog << "connected to " << to_string(server) << endl;
+      for (;;)
+      {
          string line;
-         getline (cin, line);
-         if (cin.eof()) throw cxi_exit();
- 
+         getline(cin, line);
+         if (cin.eof())
+            throw cxi_exit();
+
          string segment;
          vector<string> tokens;
          istringstream stream(line);
          while (getline(stream, segment, ' '))
             tokens.push_back(segment);
-  
-         const auto& itor = command_map.find (tokens[0]);
+
+         const auto &itor = command_map.find(tokens[0]);
          cxi_command cmd = itor == command_map.end()
-                         ? cxi_command::ERROR : itor->second;
-         switch (cmd) {
-            case cxi_command::EXIT:
-               throw cxi_exit();
-               break;
-            case cxi_command::HELP:
-               cxi_help();
-               break;
-            case cxi_command::LS:
-               cxi_ls (server);
-               break;
-            case cxi_command::RM:
-               cxi_rm (server, tokens[1]);
-               break;
-            default:
-               outlog << line << ": invalid command" << endl;
-               break;
+                               ? cxi_command::ERROR
+                               : itor->second;
+         switch (cmd)
+         {
+         case cxi_command::EXIT:
+            throw cxi_exit();
+            break;
+         case cxi_command::HELP:
+            cxi_help();
+            break;
+         case cxi_command::LS:
+            cxi_ls(server);
+            break;
+         case cxi_command::RM:
+            cxi_rm(server, tokens[1]);
+            break;
+         default:
+            outlog << line << ": invalid command" << endl;
+            break;
          }
       }
-   }catch (socket_error& error) {
+   }
+   catch (socket_error &error)
+   {
       outlog << error.what() << endl;
-   }catch (cxi_exit& error) {
-      DEBUGF ('x', "caught cxi_exit");
+   }
+   catch (cxi_exit &error)
+   {
+      DEBUGF('x', "caught cxi_exit");
    }
    return 0;
 }
-
