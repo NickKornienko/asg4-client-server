@@ -27,7 +27,8 @@ unordered_map<string, cxi_command> command_map{
     {"help", cxi_command::HELP},
     {"ls", cxi_command::LS},
     {"rm", cxi_command::RM},
-};
+    {"rm", cxi_command::GET},
+    {"rm", cxi_command::PUT}};
 
 static const char help[] = R"||(
 exit         - Exit the program.  Equivalent to EOF.
@@ -81,6 +82,47 @@ void cxi_rm(client_socket &server, string file)
    {
       outlog << "File: " << file << " removed" << endl;
    }
+}
+
+void cxi_get(client_socket &server, string file)
+{
+   cout << "TODO get" << endl;
+   // cxi_header header;
+   // header.command = cxi_command::RM;
+   // strcpy(header.filename, file.c_str());
+
+   // send_packet(server, &header, sizeof header);
+   // recv_packet(server, &header, sizeof header);
+
+   // if (header.command != cxi_command::ACK)
+   // {
+   //    outlog << "Error: Cannot remove: " << header.filename << endl;
+   // }
+   // else
+   // {
+   //    outlog << "File: " << file << " removed" << endl;
+   // }
+}
+
+void cxi_put(client_socket &server, string file)
+{
+   cout << "TODO put" << endl;
+
+   // cxi_header header;
+   // header.command = cxi_command::RM;
+   // strcpy(header.filename, file.c_str());
+
+   // send_packet(server, &header, sizeof header);
+   // recv_packet(server, &header, sizeof header);
+
+   // if (header.command != cxi_command::ACK)
+   // {
+   //    outlog << "Error: Cannot remove: " << header.filename << endl;
+   // }
+   // else
+   // {
+   //    outlog << "File: " << file << " removed" << endl;
+   // }
 }
 
 void usage()
@@ -152,6 +194,12 @@ int main(int argc, char **argv)
             break;
          case cxi_command::RM:
             cxi_rm(server, tokens[1]);
+            break;
+         case cxi_command::GET:
+            cxi_get(server, tokens[1]);
+            break;
+         case cxi_command::PUT:
+            cxi_put(server, tokens[1]);
             break;
          default:
             outlog << line << ": invalid command" << endl;
