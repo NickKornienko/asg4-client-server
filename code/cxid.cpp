@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <memory>
 using namespace std;
 
 #include <libgen.h>
@@ -79,7 +80,7 @@ void reply_get(accepted_socket &client_sock, cxi_header &header)
    int size = file.tellg();
    file.seekg(0, file.beg);
 
-   char* buffer = new char[size];
+   char *buffer = new char[size];
    file.read(buffer, size);
    file.close();
 
@@ -92,31 +93,32 @@ void reply_get(accepted_socket &client_sock, cxi_header &header)
 
 void reply_put(accepted_socket &client_sock, cxi_header &header)
 {
-   static const char ls_cmd[] = "ls -l 2>&1";
-   FILE *ls_pipe = popen(ls_cmd, "r");
-   if (ls_pipe == nullptr)
+   size_t host_nbytes = ntohl(header.nbytes);
+
+   auto buffer = make_unique<char[]>(host_nbytes + 1);
+   recv_packet(client_sock, buffer.get(), host_nbytes);
+   buffer[host_nbytes] = '\0';
+
+   ofstream ofile;
+   try
    {
-      outlog << ls_cmd << ": " << strerror(errno) << endl;
+      ofile.open(header.filename,
+                 std::ofstream::out | std::ofstream::trunc);
+   }
+   catch (const std::exception &)
+   {
       header.command = cxi_command::NAK;
-      header.nbytes = htonl(errno);
+      memset(header.filename, 0, FILENAME_SIZE);
       send_packet(client_sock, &header, sizeof header);
+
       return;
    }
-   string ls_output;
-   char buffer[0x1000];
-   for (;;)
-   {
-      char *rc = fgets(buffer, sizeof buffer, ls_pipe);
-      if (rc == nullptr)
-         break;
-      ls_output.append(buffer);
-   }
-   pclose(ls_pipe);
-   header.command = cxi_command::LSOUT;
-   header.nbytes = htonl(ls_output.size());
+   ofile.write(buffer.get(), host_nbytes);
+   ofile.close();
+
+   header.command = cxi_command::ACK;
    memset(header.filename, 0, FILENAME_SIZE);
    send_packet(client_sock, &header, sizeof header);
-   send_packet(client_sock, ls_output.c_str(), ls_output.size());
 }
 
 void run_server(accepted_socket &client_sock)

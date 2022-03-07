@@ -89,52 +89,78 @@ void cxi_rm(client_socket &server, string file)
 void cxi_get(client_socket &server, string file)
 {
    cxi_header header;
-   header.command = cxi_command::RM;
+   header.command = cxi_command::GET;
    strcpy(header.filename, file.c_str());
 
    send_packet(server, &header, sizeof header);
    recv_packet(server, &header, sizeof header);
 
-   if (header.command != cxi_command::ACK)
+   if (header.command != cxi_command::FILEOUT)
    {
       outlog << "Error: Cannot get: " << file << endl;
    }
    else
    {
-      outlog << "worked" << endl;
+      outlog << "Copied file: " << file << endl;
 
       size_t host_nbytes = ntohl(header.nbytes);
       auto buffer = make_unique<char[]>(host_nbytes + 1);
       recv_packet(server, buffer.get(), host_nbytes);
       buffer[host_nbytes] = '\0';
 
-      outlog << "here" << endl;
-
       ofstream ofile;
-      ofile.open(file, std::ofstream::out | std::ofstream::trunc);
+      try
+      {
+         ofile.open(file,
+                    std::ofstream::out | std::ofstream::trunc);
+      }
+      catch (const std::exception &)
+      {
+         outlog << "Error: Cannot open file: " << file << endl;
+         return;
+      }
+
       ofile.write(buffer.get(), host_nbytes);
+      ofile.close();
    }
 }
 
 void cxi_put(client_socket &server, string file)
 {
-   cout << "TODO put" << endl;
+   cxi_header header;
+   header.command = cxi_command::PUT;
+   strcpy(header.filename, file.c_str());
 
-   // cxi_header header;
-   // header.command = cxi_command::RM;
-   // strcpy(header.filename, file.c_str());
+   ifstream ofile(file);
+   if (!ofile.is_open())
+   {
+      outlog << "Error: Cannot open file: " << file << endl;
+      return;
+   }
 
-   // send_packet(server, &header, sizeof header);
-   // recv_packet(server, &header, sizeof header);
+   ofile.seekg(0, ofile.end);
+   int size = ofile.tellg();
+   ofile.seekg(0, ofile.beg);
 
-   // if (header.command != cxi_command::ACK)
-   // {
-   //    outlog << "Error: Cannot remove: " << header.filename << endl;
-   // }
-   // else
-   // {
-   //    outlog << "File: " << file << " removed" << endl;
-   // }
+   char *buffer = new char[size];
+   ofile.read(buffer, size);
+   ofile.close();
+
+   header.nbytes = htonl(size);
+   memset(header.filename, 0, FILENAME_SIZE);
+   send_packet(server, &header, sizeof header);
+   send_packet(server, buffer, size);
+
+   recv_packet(server, &header, sizeof header);
+
+   if (header.command != cxi_command::ACK)
+   {
+      outlog << "Error: Could not open remote file: " << file << endl;
+   }
+   else
+   {
+      outlog << "Wrote to remote file: " << file << endl;
+   }
 }
 
 void usage()

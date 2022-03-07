@@ -144,4 +144,169 @@ cxid(28997): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
 ^[[A^[[Bcxid(28997): accepted localhost (127.0.0.1) port 52840
 cxid(28997): forked cxiserver pid 30034
 cxid(28997): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
-cxid*(30034): connected to local
+cxid*(30034): connected to localhost (127.0.0.1) port 52840
+cxid*(30034): localhost (127.0.0.1) port 52840 is closed
+cxid(28997): listener.accept caught Interrupted system call
+^C
+bash-4.2$ clear
+[3;J[H[2Jbash-4.2$ clear../cxid 2222
+cxid(5508): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(5508): accepted localhost (127.0.0.1) port 52882
+cxid(5508): forked cxiserver pid 6298
+cxid(5508): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(6298): connected to localhost (127.0.0.1) port 52882
+cxid*(6298): localhost (127.0.0.1) port 52882 is closed
+cxid(5508): listener.accept caught Interrupted system call
+cxid(5508): accepted localhost (127.0.0.1) port 52892
+cxid(5508): forked cxiserver pid 12711
+cxid(5508): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(12711): connected to localhost (127.0.0.1) port 52892
+cxid*(12711): localhost (127.0.0.1) port 52892 is closed
+cxid(5508): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(3558): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(3558): accepted localhost (127.0.0.1) port 52966
+cxid(3558): forked cxiserver pid 5199
+cxid(3558): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(5199): connected to localhost (127.0.0.1) port 52966
+cxid*(5199): localhost (127.0.0.1) port 52966 is closed
+cxid(3558): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222
+cxid(11650): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(12767): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(12767): accepted localhost (127.0.0.1) port 53496
+cxid(12767): forked cxiserver pid 15845
+cxid(12767): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(15845): connected to localhost (127.0.0.1) port 53496
+cxid*(15845): localhost (127.0.0.1) port 53496 is closed
+cxid(12767): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222
+cxid(847): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(847): accepted localhost (127.0.0.1) port 53558
+cxid(847): forked cxiserver pid 1884
+cxid(847): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(1884): connected to localhost (127.0.0.1) port 53558
+cxid*(1884): localhost (127.0.0.1) port 53558 is closed
+cxid(847): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(12186): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(12186): accepted localhost (127.0.0.1) port 53598
+cxid(12186): forked cxiserver pid 14880
+cxid(12186): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(14880): connected to localhost (127.0.0.1) port 53598
+cxid*(14880): localhost (127.0.0.1) port 53598 is closed
+cxid(12186): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222
+cxid(25167): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(25167): accepted localhost (127.0.0.1) port 53626
+cxid(25167): forked cxiserver pid 25512
+cxid(25167): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(25512): connected to localhost (127.0.0.1) port 53626
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(26254): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(26254): accepted localhost (127.0.0.1) port 53706
+cxid(26254): forked cxiserver pid 26837
+cxid(26254): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(26837): connected to localhost (127.0.0.1) port 53706
+cxid*(26837): localhost (127.0.0.1) port 53706 is closed
+cxid(26254): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(5298): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(5298): accepted localhost (127.0.0.1) port 54066
+cxid(5298): forked cxiserver pid 5601
+cxid(5298): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(5601): connected to localhost (127.0.0.1) port 54066
+cxid*(5601): localhost (127.0.0.1) port 54066 is closed
+cxid(5298): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(2693): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(2693): accepted localhost (127.0.0.1) port 54124
+cxid(2693): forked cxiserver pid 2955
+cxid(2693): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(2955): connected to localhost (127.0.0.1) port 54124
+here
+cxid*(2955): localhost (127.0.0.1) port 54124 is closed
+cxid(2693): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222[C[C[C[C[C[C[C[C[C[C[7Pclear../cxid 2222
+cxid(7919): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(7919): accepted localhost (127.0.0.1) port 54138
+cxid(7919): forked cxiserver pid 8510
+cxid(7919): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(8510): connected to localhost (127.0.0.1) port 54138
+chere
+cxid*(8510): ohere
+cxid*(8510): inhere
+^C
+bash-4.2$ ../cxid 2222
+cxid(20229): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(20229): accepted localhost (127.0.0.1) port 54184
+cxid(20229): forked cxiserver pid 20785
+cxid(20229): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(20785): connected to localhost (127.0.0.1) port 54184
+cxid*(20785): localhost (127.0.0.1) port 54184 is closed
+cxid(20229): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222
+cxid(27150): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(27150): accepted localhost (127.0.0.1) port 54194
+cxid(27150): forked cxiserver pid 27504
+cxid(27150): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(27504): connected to localhost (127.0.0.1) port 54194
+^C
+bash-4.2$ ../cxid 2222
+cxid(4725): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(4725): accepted localhost (127.0.0.1) port 54206
+cxid(4725): forked cxiserver pid 5120
+cxid(4725): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(5120): connected to localhost (127.0.0.1) port 54206
+cxid*(5120): localhost (127.0.0.1) port 54206 is closed
+cxid(4725): listener.accept caught Interrupted system call
+cxid(4725): accepted localhost (127.0.0.1) port 54240
+cxid(4725): forked cxiserver pid 11243
+cxid(4725): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(11243): connected to localhost (127.0.0.1) port 54240
+cxid*(11243): localhost (127.0.0.1) port 54240 is closed
+cxid(4725): listener.accept caught Interrupted system call
+^C
+bash-4.2$ ../cxid 2222
+cxid(18990): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(18990): accepted localhost (127.0.0.1) port 54256
+cxid(18990): forked cxiserver pid 19413
+cxid(18990): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(19413): connected to localhost (127.0.0.1) port 54256
+cxid*(19413): inhere
+cxid*(19413): inhere
+^C
+bash-4.2$ ../cxid 2222
+cxid(9125): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(9125): accepted localhost (127.0.0.1) port 54308
+cxid(9125): forked cxiserver pid 9471
+cxid(9125): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(9471): connected to localhost (127.0.0.1) port 54308
+^C
+bash-4.2$ ../cxid 2222
+cxid(17650): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(17650): accepted localhost (127.0.0.1) port 54322
+cxid(17650): forked cxiserver pid 17912
+cxid(17650): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(17912): connected to localhost (127.0.0.1) port 54322
+^[[A
+^C
+bash-4.2$ ../cxid 2222
+cxid(20893): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid(20893): accepted localhost (127.0.0.1) port 54328
+cxid(20893): forked cxiserver pid 21152
+cxid(20893): unix6.lt.ucsc.edu (128.114.104.101) accepting port 2222
+cxid*(21152): connected to localhost (127.0.0.1) port 54328
+cxid*(21152): localhost (127.0.0.1) port 54328 is c
