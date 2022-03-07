@@ -1,6 +1,7 @@
 // $Id: cxid.cpp,v 1.10 2021-11-16 16:11:40-08 - - $
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -44,10 +45,8 @@ void reply_ls(accepted_socket &client_sock, cxi_header &header)
    header.command = cxi_command::LSOUT;
    header.nbytes = htonl(ls_output.size());
    memset(header.filename, 0, FILENAME_SIZE);
-   DEBUGF('h', "sending header " << header);
    send_packet(client_sock, &header, sizeof header);
    send_packet(client_sock, ls_output.c_str(), ls_output.size());
-   DEBUGF('h', "sent " << ls_output.size() << " bytes");
 }
 
 void reply_rm(accepted_socket &client_sock, cxi_header &header)
@@ -55,15 +54,69 @@ void reply_rm(accepted_socket &client_sock, cxi_header &header)
    if (unlink(header.filename))
    {
       header.command = cxi_command::NAK;
-      header.nbytes = htonl(errno);
       send_packet(client_sock, &header, sizeof header);
-      
+
       return;
    }
 
    header.command = cxi_command::ACK;
    memset(header.filename, 0, FILENAME_SIZE);
    send_packet(client_sock, &header, sizeof header);
+}
+
+void reply_get(accepted_socket &client_sock, cxi_header &header)
+{
+   ifstream file(header.filename);
+   if (!file.is_open())
+   {
+      header.command = cxi_command::NAK;
+      send_packet(client_sock, &header, sizeof header);
+
+      return;
+   }
+
+   file.seekg(0, file.end);
+   int size = file.tellg();
+   file.seekg(0, file.beg);
+
+   char* buffer = new char[size];
+   file.read(buffer, size);
+   file.close();
+
+   header.command = cxi_command::FILEOUT;
+   header.nbytes = htonl(size);
+   memset(header.filename, 0, FILENAME_SIZE);
+   send_packet(client_sock, &header, sizeof header);
+   send_packet(client_sock, buffer, size);
+}
+
+void reply_put(accepted_socket &client_sock, cxi_header &header)
+{
+   static const char ls_cmd[] = "ls -l 2>&1";
+   FILE *ls_pipe = popen(ls_cmd, "r");
+   if (ls_pipe == nullptr)
+   {
+      outlog << ls_cmd << ": " << strerror(errno) << endl;
+      header.command = cxi_command::NAK;
+      header.nbytes = htonl(errno);
+      send_packet(client_sock, &header, sizeof header);
+      return;
+   }
+   string ls_output;
+   char buffer[0x1000];
+   for (;;)
+   {
+      char *rc = fgets(buffer, sizeof buffer, ls_pipe);
+      if (rc == nullptr)
+         break;
+      ls_output.append(buffer);
+   }
+   pclose(ls_pipe);
+   header.command = cxi_command::LSOUT;
+   header.nbytes = htonl(ls_output.size());
+   memset(header.filename, 0, FILENAME_SIZE);
+   send_packet(client_sock, &header, sizeof header);
+   send_packet(client_sock, ls_output.c_str(), ls_output.size());
 }
 
 void run_server(accepted_socket &client_sock)
@@ -84,6 +137,12 @@ void run_server(accepted_socket &client_sock)
             break;
          case cxi_command::RM:
             reply_rm(client_sock, header);
+            break;
+         case cxi_command::GET:
+            reply_get(client_sock, header);
+            break;
+         case cxi_command::PUT:
+            reply_put(client_sock, header);
             break;
          default:
             outlog << "invalid client header:" << header << endl;

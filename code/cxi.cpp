@@ -1,6 +1,8 @@
 // $Id: cxi.cpp,v 1.6 2021-11-08 00:01:44-08 - - $
 
 #include <iostream>
+#include <ostream>
+#include <fstream>
 #include <sstream>
 #include <memory>
 #include <string>
@@ -27,8 +29,8 @@ unordered_map<string, cxi_command> command_map{
     {"help", cxi_command::HELP},
     {"ls", cxi_command::LS},
     {"rm", cxi_command::RM},
-    {"rm", cxi_command::GET},
-    {"rm", cxi_command::PUT}};
+    {"get", cxi_command::GET},
+    {"put", cxi_command::PUT}};
 
 static const char help[] = R"||(
 exit         - Exit the program.  Equivalent to EOF.
@@ -76,7 +78,7 @@ void cxi_rm(client_socket &server, string file)
 
    if (header.command != cxi_command::ACK)
    {
-      outlog << "Error: Cannot remove: " << header.filename << endl;
+      outlog << "Error: Cannot remove: " << file << endl;
    }
    else
    {
@@ -86,22 +88,32 @@ void cxi_rm(client_socket &server, string file)
 
 void cxi_get(client_socket &server, string file)
 {
-   cout << "TODO get" << endl;
-   // cxi_header header;
-   // header.command = cxi_command::RM;
-   // strcpy(header.filename, file.c_str());
+   cxi_header header;
+   header.command = cxi_command::RM;
+   strcpy(header.filename, file.c_str());
 
-   // send_packet(server, &header, sizeof header);
-   // recv_packet(server, &header, sizeof header);
+   send_packet(server, &header, sizeof header);
+   recv_packet(server, &header, sizeof header);
 
-   // if (header.command != cxi_command::ACK)
-   // {
-   //    outlog << "Error: Cannot remove: " << header.filename << endl;
-   // }
-   // else
-   // {
-   //    outlog << "File: " << file << " removed" << endl;
-   // }
+   if (header.command != cxi_command::ACK)
+   {
+      outlog << "Error: Cannot get: " << file << endl;
+   }
+   else
+   {
+      outlog << "worked" << endl;
+
+      size_t host_nbytes = ntohl(header.nbytes);
+      auto buffer = make_unique<char[]>(host_nbytes + 1);
+      recv_packet(server, buffer.get(), host_nbytes);
+      buffer[host_nbytes] = '\0';
+
+      outlog << "here" << endl;
+
+      ofstream ofile;
+      ofile.open(file, std::ofstream::out | std::ofstream::trunc);
+      ofile.write(buffer.get(), host_nbytes);
+   }
 }
 
 void cxi_put(client_socket &server, string file)
