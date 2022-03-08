@@ -88,6 +88,12 @@ void cxi_rm(client_socket &server, string file)
 
 void cxi_get(client_socket &server, string file)
 {
+   if(file.find('/') != std::string::npos || file.length() > 58)
+   {
+       outlog << "Error: Invalid file name: " << file << endl;
+       return;
+   }
+  
    cxi_header header;
    header.command = cxi_command::GET;
    strcpy(header.filename, file.c_str());
@@ -130,10 +136,16 @@ void cxi_get(client_socket &server, string file)
 
 void cxi_put(client_socket &server, string file)
 {
+   if(file.find('/') != std::string::npos || file.length() > 58)
+   {
+       outlog << "Error: Invalid file name: " << file << endl;
+       return;
+   }  
+
    cxi_header header;
    header.command = cxi_command::PUT;
-   strcpy(header.filename, file.c_str());
-
+   strcpy(header.filename, file.c_str()); 
+  
    ifstream ofile(file);
    if (!ofile.is_open())
    {
@@ -154,6 +166,8 @@ void cxi_put(client_socket &server, string file)
    send_packet(server, buffer, size);
 
    recv_packet(server, &header, sizeof header);
+   //memset(buffer, 0, sizeof(char) * size);
+   delete[] buffer;
 
    if (header.command != cxi_command::ACK)
    {
@@ -162,7 +176,7 @@ void cxi_put(client_socket &server, string file)
    else
    {
       outlog << "Wrote to remote file: " << file << endl;
-   }
+   } 
 }
 
 void usage()

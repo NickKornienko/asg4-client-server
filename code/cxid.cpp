@@ -90,6 +90,7 @@ void reply_get(accepted_socket &client_sock, cxi_header &header)
 
    send_packet(client_sock, &header, sizeof header);
    send_packet(client_sock, buffer, size);
+   delete[] buffer;
 }
 
 void reply_put(accepted_socket &client_sock, cxi_header &header)
