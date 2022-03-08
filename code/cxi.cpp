@@ -46,6 +46,14 @@ void cxi_help()
    cout << help;
 }
 
+void cxi_exit_helper(client_socket &server)
+{
+   cxi_header header;
+   header.command = cxi_command::EXIT;
+   send_packet(server, &header, sizeof header);
+   throw cxi_exit();
+}
+
 void cxi_ls(client_socket &server)
 {
    cxi_header header;
@@ -166,7 +174,6 @@ void cxi_put(client_socket &server, string file)
    send_packet(server, buffer, size);
 
    recv_packet(server, &header, sizeof header);
-   //memset(buffer, 0, sizeof(char) * size);
    delete[] buffer;
 
    if (header.command != cxi_command::ACK)
@@ -238,7 +245,7 @@ int main(int argc, char **argv)
          switch (cmd)
          {
          case cxi_command::EXIT:
-            throw cxi_exit();
+            cxi_exit_helper(server);
             break;
          case cxi_command::HELP:
             cxi_help();

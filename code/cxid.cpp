@@ -116,7 +116,7 @@ void reply_put(accepted_socket &client_sock, cxi_header &header)
       buffer[host_nbytes] = '\0';
       ofile.write(buffer.get(), host_nbytes);
    }
-   
+
    ofile.close();
 
    header.command = cxi_command::ACK;
@@ -147,6 +147,9 @@ void run_server(accepted_socket &client_sock)
             break;
          case cxi_command::PUT:
             reply_put(client_sock, header);
+            break;
+         case cxi_command::EXIT:
+            throw cxi_exit();
             break;
          default:
             outlog << "invalid client header:" << header << endl;
