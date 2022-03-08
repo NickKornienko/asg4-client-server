@@ -83,23 +83,17 @@ void reply_get(accepted_socket &client_sock, cxi_header &header)
    char *buffer = new char[size];
    file.read(buffer, size);
    file.close();
-   
-   memset (header.filename, 0, FILENAME_SIZE);
+
+   memset(header.filename, 0, FILENAME_SIZE);
    header.command = cxi_command::FILEOUT;
    header.nbytes = htonl(size);
-   
+
    send_packet(client_sock, &header, sizeof header);
    send_packet(client_sock, buffer, size);
 }
 
 void reply_put(accepted_socket &client_sock, cxi_header &header)
 {
-   size_t host_nbytes = ntohl(header.nbytes);
-
-   auto buffer = make_unique<char[]>(host_nbytes + 1);
-   recv_packet(client_sock, buffer.get(), host_nbytes);
-   buffer[host_nbytes] = '\0';
-
    ofstream ofile;
    try
    {
@@ -113,7 +107,15 @@ void reply_put(accepted_socket &client_sock, cxi_header &header)
 
       return;
    }
-   ofile.write(buffer.get(), host_nbytes);
+   size_t host_nbytes = ntohl(header.nbytes);
+   if (host_nbytes > 0)
+   {
+      auto buffer = make_unique<char[]>(host_nbytes + 1);
+      recv_packet(client_sock, buffer.get(), host_nbytes);
+      buffer[host_nbytes] = '\0';
+      ofile.write(buffer.get(), host_nbytes);
+   }
+   
    ofile.close();
 
    header.command = cxi_command::ACK;

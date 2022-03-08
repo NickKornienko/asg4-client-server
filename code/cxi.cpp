@@ -103,11 +103,6 @@ void cxi_get(client_socket &server, string file)
    {
       outlog << "Copied file: " << file << endl;
 
-      size_t host_nbytes = ntohl(header.nbytes);
-      auto buffer = make_unique<char[]>(host_nbytes + 1);
-      recv_packet(server, buffer.get(), host_nbytes);
-      buffer[host_nbytes] = '\0';
-
       ofstream ofile;
       try
       {
@@ -120,7 +115,15 @@ void cxi_get(client_socket &server, string file)
          return;
       }
 
-      ofile.write(buffer.get(), host_nbytes);
+      size_t host_nbytes = ntohl(header.nbytes);
+      if (host_nbytes > 0)
+      {
+         auto buffer = make_unique<char[]>(host_nbytes + 1);
+         recv_packet(server, buffer.get(), host_nbytes);
+         buffer[host_nbytes] = '\0';
+         ofile.write(buffer.get(), host_nbytes);
+      }
+      
       ofile.close();
    }
 }
