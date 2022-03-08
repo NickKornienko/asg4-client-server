@@ -83,10 +83,11 @@ void reply_get(accepted_socket &client_sock, cxi_header &header)
    char *buffer = new char[size];
    file.read(buffer, size);
    file.close();
-
+   
+   memset (header.filename, 0, FILENAME_SIZE);
    header.command = cxi_command::FILEOUT;
    header.nbytes = htonl(size);
-   memset(header.filename, 0, FILENAME_SIZE);
+   
    send_packet(client_sock, &header, sizeof header);
    send_packet(client_sock, buffer, size);
 }
@@ -108,7 +109,6 @@ void reply_put(accepted_socket &client_sock, cxi_header &header)
    catch (const std::exception &)
    {
       header.command = cxi_command::NAK;
-      memset(header.filename, 0, FILENAME_SIZE);
       send_packet(client_sock, &header, sizeof header);
 
       return;
@@ -117,7 +117,6 @@ void reply_put(accepted_socket &client_sock, cxi_header &header)
    ofile.close();
 
    header.command = cxi_command::ACK;
-   memset(header.filename, 0, FILENAME_SIZE);
    send_packet(client_sock, &header, sizeof header);
 }
 

@@ -147,7 +147,6 @@ void cxi_put(client_socket &server, string file)
    ofile.close();
 
    header.nbytes = htonl(size);
-   memset(header.filename, 0, FILENAME_SIZE);
    send_packet(server, &header, sizeof header);
    send_packet(server, buffer, size);
 
