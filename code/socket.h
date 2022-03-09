@@ -1,4 +1,6 @@
 // $Id: socket.h,v 1.5 2021-12-20 12:58:11-08 - - $
+// James Garrett jaagarre
+// Nick Kornienko nkornien
 
 #ifndef SOCKET_H
 #define SOCKET_H

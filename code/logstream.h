@@ -1,4 +1,6 @@
 // $Id: logstream.h,v 1.7 2021-12-20 12:58:11-08 - - $
+// James Garrett jaagarre
+// Nick Kornienko nkornien
 
 //
 // class logstream

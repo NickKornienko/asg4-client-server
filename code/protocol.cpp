@@ -1,4 +1,6 @@
 // $Id: protocol.cpp,v 1.17 2021-05-18 01:32:29-07 - - $
+// James Garrett jaagarre
+// Nick Kornienko nkornien
 
 #include <iomanip>
 #include <iostream>

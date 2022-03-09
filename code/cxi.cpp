@@ -1,4 +1,6 @@
 // $Id: cxi.cpp,v 1.6 2021-11-08 00:01:44-08 - - $
+// James Garrett jaagarre
+// Nick Kornienko nkornien
 
 #include <iostream>
 #include <ostream>
@@ -46,14 +48,6 @@ void cxi_help()
    cout << help;
 }
 
-void cxi_exit_helper(client_socket &server)
-{
-   cxi_header header;
-   header.command = cxi_command::EXIT;
-   send_packet(server, &header, sizeof header);
-   throw cxi_exit();
-}
-
 void cxi_ls(client_socket &server)
 {
    cxi_header header;
@@ -96,12 +90,12 @@ void cxi_rm(client_socket &server, string file)
 
 void cxi_get(client_socket &server, string file)
 {
-   if(file.find('/') != std::string::npos || file.length() > 58)
+   if (file.find('/') != std::string::npos || file.length() > 58)
    {
-       outlog << "Error: Invalid file name: " << file << endl;
-       return;
+      outlog << "Error: Invalid file name: " << file << endl;
+      return;
    }
-  
+
    cxi_header header;
    header.command = cxi_command::GET;
    strcpy(header.filename, file.c_str());
@@ -137,23 +131,23 @@ void cxi_get(client_socket &server, string file)
          buffer[host_nbytes] = '\0';
          ofile.write(buffer.get(), host_nbytes);
       }
-      
+
       ofile.close();
    }
 }
 
 void cxi_put(client_socket &server, string file)
 {
-   if(file.find('/') != std::string::npos || file.length() > 58)
+   if (file.find('/') != std::string::npos || file.length() > 58)
    {
-       outlog << "Error: Invalid file name: " << file << endl;
-       return;
-   }  
+      outlog << "Error: Invalid file name: " << file << endl;
+      return;
+   }
 
    cxi_header header;
    header.command = cxi_command::PUT;
-   strcpy(header.filename, file.c_str()); 
-  
+   strcpy(header.filename, file.c_str());
+
    ifstream ofile(file);
    if (!ofile.is_open())
    {
@@ -183,7 +177,7 @@ void cxi_put(client_socket &server, string file)
    else
    {
       outlog << "Wrote to remote file: " << file << endl;
-   } 
+   }
 }
 
 void usage()
@@ -245,7 +239,7 @@ int main(int argc, char **argv)
          switch (cmd)
          {
          case cxi_command::EXIT:
-            cxi_exit_helper(server);
+            throw cxi_exit();
             break;
          case cxi_command::HELP:
             cxi_help();

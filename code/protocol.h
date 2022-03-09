@@ -1,4 +1,6 @@
 // $Id: protocol.h,v 1.13 2021-12-20 12:58:11-08 - - $
+// James Garrett jaagarre
+// Nick Kornienko nkornien
 
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
